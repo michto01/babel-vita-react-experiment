@@ -15,7 +15,7 @@ import {
   Icon,
 } from 'konsta/react';
 
-import { MdPerson, MdEmail, MdToday, MdFileUpload } from 'react-icons/md';
+//import { MdPerson, MdEmail, MdToday, MdFileUpload } from 'react-icons/md';
 
 export default function Channels() {
   const [size, setSize] = useState('Default');
