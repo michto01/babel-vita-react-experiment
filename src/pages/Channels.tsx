@@ -20,7 +20,7 @@ import {
 
 //import { MdPerson, MdEmail, MdToday, MdFileUpload } from 'react-icons/md';
 import { HiCog, HiTranslate } from 'react-icons/hi';
-
+import { ImHeadphones } from 'react-icons/im';
 const inputStyle: any = {
   bgMaterial: '',
 };
@@ -32,7 +32,7 @@ export default function Channels() {
     <Page>
       <Navbar
         title="Babel"
-        subtitle="Assistive Listening"
+        subtitle="Mobile Assistive Listening"
         className="top-0 sticky"
         medium={size === 'Medium'}
         large={size === 'Large'}
@@ -51,7 +51,21 @@ export default function Channels() {
             />
           </Link>
         }
-        subnavbar={<Block>this is sparta</Block>}
+        subnavbar={
+          <Block>
+            {/*<List strongIos insetIos>
+              <ListInput
+                outline
+                label="Search Channel"
+                floatingLabel
+                type="text"
+                color={inputStyle}
+                placeholder="123456"
+                className={`mb-2 py-4`}
+              />
+            </List>*/}
+          </Block>
+        }
       />
       {/*left={<NavbarBackLink text="Back" onClick={() => history.back()} />}*/}
 
@@ -74,23 +88,36 @@ export default function Channels() {
         </Card>
 
         <BlockTitle withBlock={false}>Active Channels</BlockTitle>
-        <Card header="Card header" footer="Card footer">
+        <Card
+          header={
+            <div>
+              <div className={`flex`}>
+                <Icon
+                  ios={<ImHeadphones className="w-8 h-8" />}
+                  material={<ImHeadphones className="w-8 h-8" />}
+                />
+                <BlockHeader>Test</BlockHeader>
+              </div>
+            </div>
+          }
+          footer="Card footer"
+        >
           Card with header and footer. Card headers are used to display card
           titles and footers for additional information or just for custom
           actions.
         </Card>
 
-        <Block strong inset className="shadow-md">
+        <Block strong inset className="shadow-md translucent">
           <p>Test</p>
           <Button>Play</Button>
         </Block>
 
-        <Block strong inset className="shadow-md">
+        <Block strong inset className="shadow-md translucent">
           <p>Test</p>
           <Button>Play</Button>
         </Block>
 
-        <Block strong inset className="shadow-md">
+        <Block strong inset className="shadow-md translucent">
           <p>Test</p>
           <Button>Play</Button>
         </Block>
