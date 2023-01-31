@@ -19,7 +19,7 @@ import {
 } from 'konsta/react';
 
 //import { MdPerson, MdEmail, MdToday, MdFileUpload } from 'react-icons/md';
-import { HiCog, HiTranslate } from 'react-icons/hi';
+import { HiCog, HiPlay, HiTranslate } from 'react-icons/hi';
 import { ImHeadphones } from 'react-icons/im';
 const inputStyle: any = {
   bgMaterial: '',
@@ -100,7 +100,15 @@ export default function Channels() {
               </div>
             </div>
           }
-          footer="Card footer"
+          footer={
+            <Link>
+              <Icon
+                ios={<HiPlay className="w-8 h-8" />}
+                material={<HiPlay className="w-8 h-8" />}
+              />
+              Play
+            </Link>
+          }
         >
           Card with header and footer. Card headers are used to display card
           titles and footers for additional information or just for custom
