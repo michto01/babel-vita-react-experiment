@@ -9,13 +9,21 @@ import {
   BlockHeader,
   List,
   ListItem,
+  ListInput,
   Radio,
   Toggle,
   Button,
   Icon,
+  Card,
+  Toolbar,
 } from 'konsta/react';
 
 //import { MdPerson, MdEmail, MdToday, MdFileUpload } from 'react-icons/md';
+import { HiCog, HiTranslate } from 'react-icons/hi';
+
+const inputStyle: any = {
+  bgMaterial: '',
+};
 
 export default function Channels() {
   const [size, setSize] = useState('Default');
@@ -29,10 +37,59 @@ export default function Channels() {
         medium={size === 'Medium'}
         large={size === 'Large'}
         transparent={isTransparent}
-        right={<Link navbar>Settings</Link>}
-        left={<NavbarBackLink text="Back" onClick={() => history.back()} />}
+        left={
+          <Icon
+            ios={<HiTranslate className="w-8 h-8 mx-2" />}
+            material={<HiTranslate className="w-8 h-8 mx-2" />}
+          />
+        }
+        right={
+          <Link navbar>
+            <Icon
+              ios={<HiCog className="w-8 h-8" />}
+              material={<HiCog className="w-8 h-8" />}
+            />
+          </Link>
+        }
+        subnavbar={<Block>this is sparta</Block>}
       />
+      {/*left={<NavbarBackLink text="Back" onClick={() => history.back()} />}*/}
+
       <div className="relative">
+        <Card header="Card header" footer="Card footer">
+          Card with header and footer. Card headers are used to display card
+          titles and footers for additional information or just for custom
+          actions.
+          <List strongIos insetIos>
+            <ListInput
+              outline
+              label="Search Channel"
+              floatingLabel
+              type="text"
+              color={inputStyle}
+              placeholder="123456"
+              clearButton
+            />
+          </List>
+        </Card>
+
+        <BlockTitle withBlock={false}>Active Channels</BlockTitle>
+        <Card header="Card header" footer="Card footer">
+          Card with header and footer. Card headers are used to display card
+          titles and footers for additional information or just for custom
+          actions.
+        </Card>
+
+        <Block strong inset className="shadow-md">
+          <p>Test</p>
+          <Button>Play</Button>
+        </Block>
+
+        <Block strong inset className="shadow-md">
+          <p>Test</p>
+          <Button>Play</Button>
+        </Block>
+
         <Block strong inset className="shadow-md">
           <p>Test</p>
           <Button>Play</Button>
