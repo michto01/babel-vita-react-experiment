@@ -16,10 +16,10 @@ import {
   Icon,
   Card,
   Toolbar,
+  Toast,
 } from 'konsta/react';
 
-//import { MdPerson, MdEmail, MdToday, MdFileUpload } from 'react-icons/md';
-import { HiCog, HiPlay, HiTranslate } from 'react-icons/hi';
+import { HiCog, HiPlay, HiStop, HiTranslate } from 'react-icons/hi';
 import { ImHeadphones } from 'react-icons/im';
 const inputStyle: any = {
   bgMaterial: '',
@@ -28,6 +28,16 @@ const inputStyle: any = {
 export default function Channels() {
   const [size, setSize] = useState('Default');
   const [isTransparent, setIsTransparent] = useState(false);
+
+  const [toastLeftOpened, setPlayerToastOpen] = useState(false);
+  const [channel, setChannel] = useState('');
+
+  const openToast = (setter: any) => {
+    // close other toast
+    setPlayerToastOpen(false);
+    setter(true);
+  };
+
   return (
     <Page>
       <Navbar
@@ -77,7 +87,12 @@ export default function Channels() {
             className={`bg-md-light-surface-1 shadow-md`}
             title="Čeština"
             after={
-              <Link>
+              <Link
+                onClick={() => {
+                  openToast(setPlayerToastOpen);
+                  setChannel('czech');
+                }}
+              >
                 <Icon
                   className={`text-md-light-primary mx-2`}
                   ios={<HiPlay className="w-8 h-8" />}
@@ -99,7 +114,12 @@ export default function Channels() {
             link
             className={`bg-md-light-surface-1 shadow-md my-2`}
             after={
-              <Link>
+              <Link
+                onClick={() => {
+                  openToast(setPlayerToastOpen);
+                  setChannel('english');
+                }}
+              >
                 <Icon
                   className={`text-md-light-primary mx-2`}
                   ios={<HiPlay className="w-8 h-8" />}
@@ -121,7 +141,12 @@ export default function Channels() {
             link
             className={`bg-md-light-surface-1 shadow-md my-2`}
             after={
-              <Link>
+              <Link
+                onClick={() => {
+                  openToast(setPlayerToastOpen);
+                  setChannel('russian');
+                }}
+              >
                 <Icon
                   className={`text-md-light-primary mx-2`}
                   ios={<HiPlay className="w-8 h-8" />}
@@ -138,6 +163,27 @@ export default function Channels() {
             }
           />
         </List>
+
+        <Toast
+          position="center"
+          opened={toastLeftOpened}
+          button={
+            <Button
+              rounded
+              clear
+              small
+              inline
+              onClick={() => setPlayerToastOpen(false)}
+            >
+              <Icon
+                ios={<HiStop className="w-8 h-8" />}
+                material={<HiStop className="w-8 h-8" />}
+              />
+            </Button>
+          }
+        >
+          <div className="shrink">Now playing: {channel}</div>
+        </Toast>
       </div>
     </Page>
   );
