@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import React, { useState } from 'react';
 import {
   Page,
@@ -19,6 +22,21 @@ import {
   Toast,
 } from 'konsta/react';
 
+/*
+import {
+  connect,
+  Room,
+  RoomEvent,
+  RemoteParticipant,
+  RemoteTrackPublication,
+  RemoteTrack,
+  Participant,
+} from 'livekit-client';
+*/
+
+import { AccessToken } from 'livekit-server-sdk';
+import { LiveKitRoom } from '@livekit/components-react';
+
 import { HiCog, HiPlay, HiStop, HiTranslate } from 'react-icons/hi';
 import { ImHeadphones } from 'react-icons/im';
 const inputStyle: any = {
@@ -38,12 +56,32 @@ export default function Channels() {
     setter(true);
   };
 
+  const createRoom = (user: string, room: string) => {
+    const token = new AccessToken(process.env.APIKEY, process.env.SECRET, {
+      identity: user,
+    });
+
+    token.addGrant({
+      room: room,
+      roomList: true,
+      roomJoin: true,
+      roomAdmin: false,
+      roomRecord: false,
+      hidden: true,
+      canPublish: false,
+      canPublishData: false,
+      canSubscribe: true,
+    });
+
+    return token;
+  };
+
   return (
     <Page>
       <Navbar
         title="Babel"
         subtitle="Mobile Assistive Listening"
-        className="top-0 sticky "
+        className="top-0 sticky font-black"
         medium={size === 'Medium'}
         large={size === 'Large'}
         transparent={isTransparent}
