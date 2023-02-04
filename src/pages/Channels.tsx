@@ -39,7 +39,8 @@ import {
   ConnectionState,
 } from '@livekit/components-react';
 
-import * from '@livekit/components-styles';
+import '@livekit/components-styles';
+import '@livekit/components-styles/prefabs';
 
 //import '@livekit/components-react/index.css';
 // used by the default ParticipantView to maintain video aspect ratio.
