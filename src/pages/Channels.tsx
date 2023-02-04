@@ -36,8 +36,17 @@ import {
 import {
   AudioConference,
   LiveKitRoom,
-  VideoConference,
+  ConnectionState,
 } from '@livekit/components-react';
+
+import * from '@livekit/components-styles';
+
+//import '@livekit/components-react/index.css';
+// used by the default ParticipantView to maintain video aspect ratio.
+// this CSS must be imported globally
+// if you are using a custom Participant renderer, this import isn't necessary.
+//import 'react-aspect-ratio/aspect-ratio.css';
+
 import axios from 'axios';
 
 import { HiCog, HiPlay, HiStop, HiTranslate } from 'react-icons/hi';
@@ -53,6 +62,7 @@ export default function Channels() {
   const [toastLeftOpened, setPlayerToastOpen] = useState(false);
   const [channel, setChannel] = useState('');
   const [roomAccess, setRoomAccess] = useState('');
+  const [roomPublisher, setRoomPublisher] = useState('');
 
   const openToast = async (setter: any) => {
     // close other toast
@@ -62,8 +72,18 @@ export default function Channels() {
   };
 
   const accessChannel = async (room: string) => {
-    const token = await axios.get('/api/channels');
+    const token = await axios.post('/api/channels');
+
+    const rooms = await axios.post('/api/rooms');
+    console.log(rooms);
+
     setRoomAccess(token.data.token);
+  };
+
+  const publishChannel = async (room: string) => {
+    const token = await axios.post('/api/publish');
+
+    setRoomPublisher(token.data.token);
   };
 
   return (
@@ -83,10 +103,16 @@ export default function Channels() {
         }
         right={
           <Link navbar>
-            <Icon
-              ios={<HiCog className="w-8 h-8" />}
-              material={<HiCog className="w-8 h-8" />}
-            />
+            <Link
+              onClick={() => {
+                publishChannel('czech');
+              }}
+            >
+              <Icon
+                ios={<HiCog className="w-8 h-8" />}
+                material={<HiCog className="w-8 h-8" />}
+              />
+            </Link>
           </Link>
         }
       />
@@ -193,6 +219,25 @@ export default function Channels() {
           />
         </List>
 
+        <BlockTitle withBlock={false}>LiveKit</BlockTitle>
+        <Block>
+          <div className="roomContainer">
+            <LiveKitRoom
+              serverUrl={`wss://babel.livekit.cloud`}
+              token={roomPublisher}
+              connect={true}
+              audio={true}
+              video={false}
+              onError={(error) => {
+                console.log(error);
+              }}
+            >
+              <AudioConference />
+              <ConnectionState />
+            </LiveKitRoom>
+          </div>
+        </Block>
+
         <Toast
           position="center"
           opened={toastLeftOpened}
@@ -212,11 +257,13 @@ export default function Channels() {
           }
         >
           <div className="shrink">
-            Now playing: {channel} {roomAccess}
+            Now playing: {channel} {/*roomAccess*/}
             <LiveKitRoom
               serverUrl={`wss://babel.livekit.cloud`}
               token={roomAccess}
               connect={true}
+              audio={true}
+              video={false}
               onError={(error) => {
                 console.log(error);
               }}

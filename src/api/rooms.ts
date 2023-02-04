@@ -1,14 +1,55 @@
 import * as dotenv from 'dotenv';
 import type { Handler } from 'vite-plugin-mix';
 
-import { AccessToken } from 'livekit-server-sdk';
+import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
 
 dotenv.config();
 //const app = express();
 
-const createRoom = (user: string, room: string) => {
+const roomManager = new RoomServiceClient(
+  `https://${process.env.LIVEKIT}`,
+  process.env.APIKEY,
+  process.env.SECRET
+);
+
+const publisherCreateRoom = async (user: string, room: string) => {
   let token = new AccessToken(process.env.APIKEY, process.env.SECRET, {
     identity: user,
+    name: 'Translator',
+  });
+
+  token.addGrant({
+    room: room,
+    roomList: true,
+    roomJoin: true,
+    roomAdmin: true,
+    roomRecord: false,
+    hidden: true,
+    canPublish: true,
+    canPublishData: true,
+    canSubscribe: true,
+  });
+
+  const rooms = await roomManager.listRooms();
+  const isActive = rooms.filter((r) => r.name == room);
+
+  if (!isActive.length) {
+    const opts = {
+      name: room,
+      // timeout in seconds
+      emptyTimeout: 10 * 60 * 60,
+      maxParticipants: 20,
+    };
+    await roomManager.createRoom(opts);
+  }
+
+  return token;
+};
+
+const createRoom = async (user: string, room: string) => {
+  let token = new AccessToken(process.env.APIKEY, process.env.SECRET, {
+    identity: user,
+    name: 'Listener',
   });
 
   token.addGrant({
@@ -19,22 +60,55 @@ const createRoom = (user: string, room: string) => {
     roomRecord: false,
     hidden: true,
     canPublish: false,
-    canPublishData: false,
+    canPublishData: true,
     canSubscribe: true,
   });
+
+  const rooms = await roomManager.listRooms();
+  const isActive = rooms.filter((r) => r.name == room);
+
+  if (!isActive.length) {
+    const opts = {
+      name: room,
+      // timeout in seconds
+      emptyTimeout: 10 * 60 * 60,
+      maxParticipants: 20,
+    };
+    await roomManager.createRoom(opts);
+  }
 
   return token;
 };
 
-export const handler: Handler = (req, res, next) => {
-  if (req.path === '/api/channels') {
-    //const { id, who } = req.params;
+export const handler: Handler = async (req, res, next) => {
+  if (req.method == 'POST') {
+    if (req.path === '/api/channels') {
+      //const { id, who } = req.params;
 
-    const { id, who } = { id: 'jo', who: 'czech' };
+      const { id, who } = { id: 'jo', who: 'czech' };
 
+      return res.end(
+        JSON.stringify({
+          token: (await createRoom(id, who)).toJwt(),
+        })
+      );
+    }
+
+    if (req.path === '/api/publish') {
+      const { id, who } = { id: 'translator', who: 'czech' };
+
+      return res.end(
+        JSON.stringify({
+          token: (await publisherCreateRoom(id, who)).toJwt(),
+        })
+      );
+    }
+  }
+
+  if (req.path === '/api/rooms') {
     return res.end(
       JSON.stringify({
-        token: createRoom(id, who).toJwt(),
+        rooms: await roomManager.listRooms(),
       })
     );
   }
