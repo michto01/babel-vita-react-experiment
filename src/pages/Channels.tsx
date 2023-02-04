@@ -1,5 +1,5 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
+//import * as dotenv from 'dotenv';
+//dotenv.config();
 
 import React, { useState } from 'react';
 import {
@@ -33,9 +33,12 @@ import {
   Participant,
 } from 'livekit-client';
 */
-
-import { AccessToken } from 'livekit-server-sdk';
-import { LiveKitRoom } from '@livekit/components-react';
+import {
+  AudioConference,
+  LiveKitRoom,
+  VideoConference,
+} from '@livekit/components-react';
+import axios from 'axios';
 
 import { HiCog, HiPlay, HiStop, HiTranslate } from 'react-icons/hi';
 import { ImHeadphones } from 'react-icons/im';
@@ -49,31 +52,18 @@ export default function Channels() {
 
   const [toastLeftOpened, setPlayerToastOpen] = useState(false);
   const [channel, setChannel] = useState('');
+  const [roomAccess, setRoomAccess] = useState('');
 
-  const openToast = (setter: any) => {
+  const openToast = async (setter: any) => {
     // close other toast
+
     setPlayerToastOpen(false);
     setter(true);
   };
 
-  const createRoom = (user: string, room: string) => {
-    const token = new AccessToken(process.env.APIKEY, process.env.SECRET, {
-      identity: user,
-    });
-
-    token.addGrant({
-      room: room,
-      roomList: true,
-      roomJoin: true,
-      roomAdmin: false,
-      roomRecord: false,
-      hidden: true,
-      canPublish: false,
-      canPublishData: false,
-      canSubscribe: true,
-    });
-
-    return token;
+  const accessChannel = async (room: string) => {
+    const token = await axios.get('/api/channels');
+    setRoomAccess(token.data.token);
   };
 
   return (
@@ -129,6 +119,7 @@ export default function Channels() {
                 onClick={() => {
                   openToast(setPlayerToastOpen);
                   setChannel('czech');
+                  accessChannel('czech');
                 }}
               >
                 <Icon
@@ -220,7 +211,19 @@ export default function Channels() {
             </Button>
           }
         >
-          <div className="shrink">Now playing: {channel}</div>
+          <div className="shrink">
+            Now playing: {channel} {roomAccess}
+            <LiveKitRoom
+              serverUrl={`wss://babel.livekit.cloud`}
+              token={roomAccess}
+              connect={true}
+              onError={(error) => {
+                console.log(error);
+              }}
+            >
+              <AudioConference />
+            </LiveKitRoom>
+          </div>
         </Toast>
       </div>
     </Page>
