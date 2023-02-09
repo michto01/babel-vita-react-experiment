@@ -5,53 +5,35 @@ import React, { useState } from 'react';
 import {
   Page,
   Navbar,
-  NavbarBackLink,
   Link,
   Block,
   BlockTitle,
-  BlockHeader,
   List,
   ListItem,
-  ListInput,
-  Radio,
-  Toggle,
   Button,
   Icon,
-  Card,
-  Toolbar,
   Toast,
 } from 'konsta/react';
 
-/*
-import {
-  connect,
-  Room,
-  RoomEvent,
-  RemoteParticipant,
-  RemoteTrackPublication,
-  RemoteTrack,
-  Participant,
-} from 'livekit-client';
-*/
 import {
   AudioConference,
   LiveKitRoom,
   ConnectionState,
+  ParticipantLoop,
+  ParticipantName,
+  ControlBar,
+  LayoutContextProvider,
 } from '@livekit/components-react';
 
 import '@livekit/components-styles';
 import '@livekit/components-styles/prefabs';
 
-//import '@livekit/components-react/index.css';
-// used by the default ParticipantView to maintain video aspect ratio.
-// this CSS must be imported globally
-// if you are using a custom Participant renderer, this import isn't necessary.
-//import 'react-aspect-ratio/aspect-ratio.css';
-
 import axios from 'axios';
 
 import { HiCog, HiPlay, HiStop, HiTranslate } from 'react-icons/hi';
 import { ImHeadphones } from 'react-icons/im';
+import { randomUUID } from 'crypto';
+
 const inputStyle: any = {
   bgMaterial: '',
 };
@@ -65,6 +47,11 @@ export default function Channels() {
   const [roomAccess, setRoomAccess] = useState('');
   const [roomPublisher, setRoomPublisher] = useState('');
 
+  const createListenerId = async () => {
+    const uuid = await axios.get('/api/uuid');
+    return 'listener@' + uuid;
+  };
+
   const openToast = async (setter: any) => {
     // close other toast
 
@@ -73,7 +60,9 @@ export default function Channels() {
   };
 
   const accessChannel = async (room: string) => {
-    const token = await axios.post('/api/channels');
+    const token = await axios.post('/api/channels', {
+      identity: createListenerId(),
+    });
 
     const rooms = await axios.post('/api/rooms');
     console.log(rooms);
@@ -229,12 +218,22 @@ export default function Channels() {
               connect={true}
               audio={true}
               video={false}
+              screen={false}
               onError={(error) => {
                 console.log(error);
               }}
             >
-              <AudioConference />
-              <ConnectionState />
+              {/*<AudioConference />*/}
+              <LayoutContextProvider>
+                {/*onPinChange={handlePinStateChange}*/}
+                <ConnectionState />
+                <ParticipantLoop>
+                  <ParticipantName />
+                </ParticipantLoop>
+                <ControlBar
+                  controls={{ camera: false, screenShare: false, chat: false }}
+                />
+              </LayoutContextProvider>
             </LiveKitRoom>
           </div>
         </Block>
@@ -265,6 +264,7 @@ export default function Channels() {
               connect={true}
               audio={true}
               video={false}
+              screen={false}
               onError={(error) => {
                 console.log(error);
               }}

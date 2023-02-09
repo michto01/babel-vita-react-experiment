@@ -9,8 +9,8 @@ import Home from './pages/Home';
 import Channels from './pages/Channels';
 
 function App() {
-  const [theme, setTheme] = useState<themeTypes>('ios');
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState<themeTypes>('material');
+  const [darkMode, setDarkMode] = useState(true);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -62,7 +62,7 @@ function App() {
   }, [theme]);
 
   return (
-    <KonstaApp theme="material" safeAreas={!inIFrame}>
+    <KonstaApp theme="material" className="!dark" safeAreas={!inIFrame}>
       <Router>
         <Routes>
           <Route path="/" element={<Signin />} />

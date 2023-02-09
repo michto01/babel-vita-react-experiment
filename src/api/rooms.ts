@@ -1,7 +1,9 @@
 import * as dotenv from 'dotenv';
-import type { Handler } from 'vite-plugin-mix';
+import { Handler } from 'vite-plugin-mix';
 
 import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
+import { randomUUID } from 'crypto';
+import bodyParser from 'body-parser';
 
 dotenv.config();
 //const app = express();
@@ -80,9 +82,15 @@ const createRoom = async (user: string, room: string) => {
   return token;
 };
 
+const parser = bodyParser.json();
+
 export const handler: Handler = async (req, res, next) => {
   if (req.method == 'POST') {
     if (req.path === '/api/channels') {
+      //parser(req, res, next);
+
+      //ares.use(bodyParser.json());
+      //bodyParser()
       //const { id, who } = req.params;
 
       const { id, who } = { id: 'jo', who: 'czech' };
@@ -103,6 +111,14 @@ export const handler: Handler = async (req, res, next) => {
         })
       );
     }
+  }
+
+  if (req.path === '/api/uuid') {
+    return res.end(
+      JSON.stringify({
+        uuid: randomUUID,
+      })
+    );
   }
 
   if (req.path === '/api/rooms') {
