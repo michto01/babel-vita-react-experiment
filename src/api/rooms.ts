@@ -4,6 +4,7 @@ import { Handler } from 'vite-plugin-mix';
 import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
 import { randomUUID } from 'crypto';
 import bodyParser from 'body-parser';
+import { IncomingMessage } from 'http';
 
 dotenv.config();
 //const app = express();
@@ -13,6 +14,35 @@ const roomManager = new RoomServiceClient(
   process.env.APIKEY,
   process.env.SECRET
 );
+
+const customBodyParser = (req: IncomingMessage) =>
+  new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', (chunk: string) => {
+      data += chunk;
+    });
+    req.on('end', async () => {
+      const body = JSON.parse(data);
+      resolve(body);
+    });
+  });
+
+const makeRoom = async (name: string, opts: RoomOptions | null) => {
+  if (null == opts) {
+    opts = {
+      maxParticipants: 50,
+      timeout: 10 * 60 * 60,
+    };
+  }
+
+  const roomOpts = {
+    name: name,
+    emptyTimeout: opts.timeout,
+    maxParticipants: opts.maxParticipants,
+  };
+
+  await roomManager.createRoom(roomOpts);
+};
 
 const publisherCreateRoom = async (user: string, room: string) => {
   let token = new AccessToken(process.env.APIKEY, process.env.SECRET, {
@@ -36,13 +66,7 @@ const publisherCreateRoom = async (user: string, room: string) => {
   const isActive = rooms.filter((r) => r.name == room);
 
   if (!isActive.length) {
-    const opts = {
-      name: room,
-      // timeout in seconds
-      emptyTimeout: 10 * 60 * 60,
-      maxParticipants: 20,
-    };
-    await roomManager.createRoom(opts);
+    await makeRoom(room, null);
   }
 
   return token;
@@ -70,34 +94,22 @@ const createRoom = async (user: string, room: string) => {
   const isActive = rooms.filter((r) => r.name == room);
 
   if (!isActive.length) {
-    const opts = {
-      name: room,
-      // timeout in seconds
-      emptyTimeout: 10 * 60 * 60,
-      maxParticipants: 20,
-    };
-    await roomManager.createRoom(opts);
+    await makeRoom(room, null);
   }
 
   return token;
 };
 
-const parser = bodyParser.json();
-
 export const handler: Handler = async (req, res, next) => {
   if (req.method == 'POST') {
     if (req.path === '/api/channels') {
-      //parser(req, res, next);
-
-      //ares.use(bodyParser.json());
-      //bodyParser()
-      //const { id, who } = req.params;
-
-      const { id, who } = { id: 'jo', who: 'czech' };
+      const body: any = await customBodyParser(req);
+      const { identity, room } = body;
+      const roomManager = await createRoom(identity, room);
 
       return res.end(
         JSON.stringify({
-          token: (await createRoom(id, who)).toJwt(),
+          token: roomManager.toJwt(),
         })
       );
     }
@@ -116,7 +128,7 @@ export const handler: Handler = async (req, res, next) => {
   if (req.path === '/api/uuid') {
     return res.end(
       JSON.stringify({
-        uuid: randomUUID,
+        uuid: randomUUID(),
       })
     );
   }

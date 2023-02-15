@@ -29,6 +29,7 @@ import '@livekit/components-styles';
 import '@livekit/components-styles/prefabs';
 
 import axios from 'axios';
+import store from 'store2';
 
 import { HiCog, HiPlay, HiStop, HiTranslate } from 'react-icons/hi';
 import { ImHeadphones } from 'react-icons/im';
@@ -48,8 +49,12 @@ export default function Channels() {
   const [roomPublisher, setRoomPublisher] = useState('');
 
   const createListenerId = async () => {
-    const uuid = await axios.get('/api/uuid');
-    return 'listener@' + uuid;
+    if (!store.has('uuid')) {
+      store.set('uuid', (await axios.get('/api/uuid')).data.uuid);
+    }
+
+    const uuid = store.get('uuid');
+    return `listener@${uuid.split('-').at(-1)}`;
   };
 
   const openToast = async (setter: any) => {
@@ -61,7 +66,8 @@ export default function Channels() {
 
   const accessChannel = async (room: string) => {
     const token = await axios.post('/api/channels', {
-      identity: createListenerId(),
+      identity: await createListenerId(),
+      room: room,
     });
 
     const rooms = await axios.post('/api/rooms');
@@ -106,22 +112,6 @@ export default function Channels() {
           </Link>
         }
       />
-      {/*subnavbar={
-          <Block>
-            {/*<List strongIos insetIos>
-              <ListInput
-                outline
-                label="Search Channel"
-                floatingLabel
-                type="text"
-                color={inputStyle}
-                placeholder="123456"
-                className={`mb-2 py-4`}
-              />
-            </List>* /}
-          </Block>
-        }*/}
-      {/*left={<NavbarBackLink text="Back" onClick={() => history.back()} />}*/}
 
       <div className="relative">
         <BlockTitle withBlock={false}>Active Channels</BlockTitle>
@@ -269,7 +259,19 @@ export default function Channels() {
                 console.log(error);
               }}
             >
-              <AudioConference />
+              <LayoutContextProvider>
+                {/*onPinChange={handlePinStateChange}*/}
+                <ConnectionState />
+                <div>
+                  <ParticipantLoop>
+                    <ParticipantName />
+                  </ParticipantLoop>
+                </div>
+                <ControlBar
+                  controls={{ camera: false, screenShare: false, chat: false }}
+                />
+                <AudioConference />
+              </LayoutContextProvider>
             </LiveKitRoom>
           </div>
         </Toast>
