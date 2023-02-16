@@ -35,6 +35,8 @@ import { HiCog, HiPlay, HiStop, HiTranslate } from 'react-icons/hi';
 import { ImHeadphones } from 'react-icons/im';
 import { randomUUID } from 'crypto';
 
+import Publisher from '../fragments/Publisher';
+
 const inputStyle: any = {
   bgMaterial: '',
 };
@@ -114,6 +116,10 @@ export default function Channels() {
       />
 
       <div className="relative">
+        <Publisher
+          name=": Custom component"
+          className={`text-green-800 p-4 bg-green-300 font-extrabold text-3xl`}
+        />
         <BlockTitle withBlock={false}>Active Channels</BlockTitle>
         <List dividers={false}>
           <ListItem
