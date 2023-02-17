@@ -26,3 +26,9 @@ export const makeRoom = async (name: string, opts: RoomOptions | null) => {
 
   await roomManager.createRoom(roomOpts);
 };
+
+export class RoomManager {
+  async create(name: string, identity: string) {
+    return 'test';
+  }
+}

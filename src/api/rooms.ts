@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 import bodyParser from 'body-parser';
 import { IncomingMessage } from 'http';
 
-import { makeRoom } from './RoomManager';
+import { makeRoom, RoomManager } from './RoomManager';
 
 dotenv.config();
 //const app = express();
@@ -34,6 +34,8 @@ const publisherCreateRoom = async (user: string, room: string) => {
     identity: user,
     name: 'Translator',
   });
+
+  const test = await new RoomManager().create('test', 'stress');
 
   token.addGrant({
     room: room,
