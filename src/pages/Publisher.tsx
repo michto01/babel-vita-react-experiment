@@ -1,6 +1,3 @@
-//import * as dotenv from 'dotenv';
-//dotenv.config();
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +9,7 @@ import {
   BlockTitle,
   List,
   ListItem,
+  ListInput,
   Button,
   Icon,
   Toast,
@@ -33,11 +31,14 @@ import '@livekit/components-styles/prefabs';
 import axios from 'axios';
 import store from 'store2';
 
-import { HiCog, HiPlay, HiStop, HiTranslate } from 'react-icons/hi';
+import {
+  HiCog,
+  HiPlay,
+  HiStop,
+  HiTranslate,
+  HiBackspace,
+} from 'react-icons/hi';
 import { ImHeadphones } from 'react-icons/im';
-import { randomUUID } from 'crypto';
-
-import PublisherFragment from '../fragments/PublisherFragment';
 
 const inputStyle: any = {
   bgMaterial: '',
@@ -92,8 +93,8 @@ export default function Channels() {
     <Page>
       <Navbar
         title="Babel"
-        subtitle="Mobile Assistive Listening"
-        className="top-0 sticky font-black"
+        subtitle="Publisher"
+        className="top-0 sticky font-yellow-800 bg-yellow-200"
         medium={size === 'Medium'}
         large={size === 'Large'}
         transparent={isTransparent}
@@ -105,108 +106,50 @@ export default function Channels() {
         }
         right={
           <Link
+            navbar
             onClick={(c) => {
-              navigate('/publish');
+              navigate('/channels');
             }}
           >
             <Icon
-              ios={<HiCog className="w-8 h-8" />}
-              material={<HiCog className="w-8 h-8" />}
+              ios={<HiBackspace className="w-8 h-8" />}
+              material={<HiBackspace className="w-8 h-8" />}
             />
           </Link>
         }
       />
 
       <div className="relative">
-        <PublisherFragment
-          name=": Custom component"
-          className={`text-green-800 p-4 bg-green-300 font-extrabold text-3xl`}
-        />
-        <BlockTitle withBlock={false}>Active Channels</BlockTitle>
-        <List dividers={false}>
-          <ListItem
-            className={`bg-md-light-surface-1 shadow-md`}
-            title="Čeština"
-            after={
-              <div>
-                <Link
-                  onClick={() => {
-                    openToast(setPlayerToastOpen);
-                    setChannel('czech');
-                    accessChannel('czech');
-                  }}
-                >
-                  <Icon
-                    className={`text-md-light-primary mx-2`}
-                    ios={<HiPlay className="w-8 h-8" />}
-                    material={<HiPlay className="w-8 h-8" />}
-                  />
-                </Link>
-              </div>
-            }
-            media={
-              <Icon
-                className={`text-md-light-primary`}
-                ios={<ImHeadphones className="w-8 h-8" />}
-                material={<ImHeadphones className="w-8 h-8" />}
-              />
-            }
-          />
+        <BlockTitle withBlock={false}>Channel properties</BlockTitle>
+        <Block>
+          <List strongIos insetIos>
+            <ListInput
+              outline
+              label="Name"
+              type="text"
+              placeholder="Channel name"
+              media={<HiStop />}
+            />
 
-          <ListItem
-            title="English"
-            className={`bg-md-light-surface-1 shadow-md my-2`}
-            after={
-              <Link
-                onClick={() => {
-                  openToast(setPlayerToastOpen);
-                  setChannel('english');
-                }}
-              >
-                <Icon
-                  className={`text-md-light-primary mx-2`}
-                  ios={<HiPlay className="w-8 h-8" />}
-                  material={<HiPlay className="w-8 h-8" />}
-                />
-              </Link>
-            }
-            media={
-              <Icon
-                className={`text-md-light-primary`}
-                ios={<ImHeadphones className="w-8 h-8" />}
-                material={<ImHeadphones className="w-8 h-8" />}
-              />
-            }
-          />
+            <ListInput
+              outline
+              label="Description"
+              type="text"
+              placeholder="Channel description"
+              media={<HiStop />}
+            />
 
-          <ListItem
-            title="Pусский"
-            className={`bg-md-light-surface-1 shadow-md my-2`}
-            after={
-              <Link
-                onClick={() => {
-                  openToast(setPlayerToastOpen);
-                  setChannel('russian');
-                }}
-              >
-                <Icon
-                  className={`text-md-light-primary mx-2`}
-                  ios={<HiPlay className="w-8 h-8" />}
-                  material={<HiPlay className="w-8 h-8" />}
-                />
-              </Link>
-            }
-            media={
-              <Icon
-                className={`text-md-light-primary`}
-                ios={<ImHeadphones className="w-8 h-8" />}
-                material={<ImHeadphones className="w-8 h-8" />}
-              />
-            }
-          />
-        </List>
+            <ListInput
+              outline
+              label="Translator"
+              type="name"
+              placeholder="Your name"
+              media={<HiStop />}
+            />
+          </List>
+        </Block>
 
-        <BlockTitle withBlock={false}>LiveKit</BlockTitle>
+        <BlockTitle withBlock={false}>Control</BlockTitle>
         <Block>
           <div className="roomContainer">
             <LiveKitRoom

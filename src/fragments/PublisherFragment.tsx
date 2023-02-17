@@ -1,11 +1,13 @@
 import { PropsWithChildren } from 'react';
 
-type PublisherProps = {
+type PublisherFragmentProps = {
   name: string | null;
   className: string | undefined;
 };
 
-const Publisher = (props: PropsWithChildren<PublisherProps>) => {
+const PublisherFragment = (
+  props: PropsWithChildren<PublisherFragmentProps>
+) => {
   return (
     <div className={!props.className ? '' : props.className}>
       <h1>Test {props.name}</h1>
@@ -13,4 +15,4 @@ const Publisher = (props: PropsWithChildren<PublisherProps>) => {
   );
 };
 
-export default Publisher;
+export default PublisherFragment;

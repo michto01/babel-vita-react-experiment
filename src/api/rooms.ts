@@ -6,6 +6,8 @@ import { randomUUID } from 'crypto';
 import bodyParser from 'body-parser';
 import { IncomingMessage } from 'http';
 
+import { makeRoom } from './RoomManager';
+
 dotenv.config();
 //const app = express();
 
@@ -26,23 +28,6 @@ const customBodyParser = (req: IncomingMessage) =>
       resolve(body);
     });
   });
-
-const makeRoom = async (name: string, opts: RoomOptions | null) => {
-  if (null == opts) {
-    opts = {
-      maxParticipants: 50,
-      timeout: 10 * 60 * 60,
-    };
-  }
-
-  const roomOpts = {
-    name: name,
-    emptyTimeout: opts.timeout,
-    maxParticipants: opts.maxParticipants,
-  };
-
-  await roomManager.createRoom(roomOpts);
-};
 
 const publisherCreateRoom = async (user: string, room: string) => {
   let token = new AccessToken(process.env.APIKEY, process.env.SECRET, {

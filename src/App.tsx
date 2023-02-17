@@ -7,6 +7,7 @@ import { modeTypes, themeTypes } from './types/theme';
 import Signin from './pages/Signin';
 import Home from './pages/Home';
 import Channels from './pages/Channels';
+import Publisher from './pages/Publisher';
 
 function App() {
   const [theme, setTheme] = useState<themeTypes>('material');
@@ -68,6 +69,7 @@ function App() {
           <Route path="/" element={<Signin />} />
           <Route path="/home" element={<Home />} />
           <Route path="/channels" element={<Channels />} />
+          <Route path="/publish" element={<Publisher />} />
         </Routes>
       </Router>
     </KonstaApp>
